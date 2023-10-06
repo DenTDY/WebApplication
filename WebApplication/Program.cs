@@ -1,5 +1,3 @@
-using NLog;
-
 namespace WebApplication;
 
 public class Program

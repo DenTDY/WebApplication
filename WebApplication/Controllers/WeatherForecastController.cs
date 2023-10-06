@@ -7,20 +7,19 @@ namespace WebApplication.Controllers
     [Route("[controller]")]
     public class WeatherForecastController : ControllerBase
     {
-        private ILoggerManager _logger;
-        public WeatherForecastController(ILoggerManager logger)
+        private readonly IRepositoryManager _repository;
+        public WeatherForecastController(IRepositoryManager repositoryManager)
         {
-            _logger = logger;
+            _repository = repositoryManager;
         }
 
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            _logger.LogInfo("¬от информационное сообщение от нашего контроллера значений.");
-            _logger.LogDebug("¬от отладочное сообщение от нашего контроллера значений.");
-            _logger.LogWarn("¬от сообщение предупреждени€ от нашего контроллера значений.");
-            _logger.LogError("¬от сообщение об ошибке от нашего контроллера значений.");
-            
+            _repository.Company.TestCompany();
+            _repository.Employee.TestEmployee();
+            _repository.House.TestHouse();
+            _repository.Apartment.TestApartment();
             return new string[] { "value1", "value2" };
         }
     }

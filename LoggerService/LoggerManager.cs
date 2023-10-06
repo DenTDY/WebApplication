@@ -21,7 +21,8 @@ namespace LoggerService
         {
             logger.Info(message);
         }
-        public void LogWarn(string message)
+
+        public void LogWar(string message)
         {
             logger.Warn(message);
         }
