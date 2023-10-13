@@ -11,6 +11,13 @@ namespace Repository
 
         }
 
+        public IEnumerable<House> GetAllHouses(bool trackChanges)
+        {
+            return FindAll(trackChanges)
+                .OrderBy(c => c.Address)
+                .ToList();
+        }
+
         public void TestHouse()
         {
            

@@ -1,3 +1,5 @@
+using Contracts;
+using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using NLog;
 using WebApplication.Extensions;
@@ -31,15 +33,18 @@ public class Startup
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager loggerManager)
     {
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI();
+        }
+        else
+        {
+            app.UseHsts();
         }
 
+        app.ConfigureExceptionHandler(loggerManager);
         app.UseHttpsRedirection();
         app.UseStaticFiles();
         app.UseCors("CorsPolicy");
@@ -55,6 +60,13 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
+        });
+
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapControllerRoute(
+                name: "default",
+                pattern: "{controller=Home}/{action=Index}/{id?}");
         });
     }
 }

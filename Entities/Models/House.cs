@@ -20,6 +20,6 @@ namespace Entities.Models
         [MaxLength(3, ErrorMessage = "Maximum length for rhe NumberFloors is 3 characte")]
         public int NumberFloors { get; set; }
 
-        public ICollection<Apartment> Employees { get; set; }
+        public ICollection<Apartment> Apartments { get; set; }
     }
 }
