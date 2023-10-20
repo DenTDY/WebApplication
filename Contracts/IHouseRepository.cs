@@ -6,5 +6,6 @@ namespace Contracts
     {
         public void TestHouse();
         IEnumerable<House> GetAllHouses(bool trackChanges);
+        House GetHouse(Guid houseId, bool trackChanges);
     }
 }

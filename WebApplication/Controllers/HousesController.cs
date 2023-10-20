@@ -26,5 +26,21 @@ namespace WebApp.Controllers
                 var housesDto = _mapper.Map<IEnumerable<HouseDto>>(houses);
                 return Ok(housesDto);
         }
+
+        [HttpGet("{id}")]
+        public IActionResult GetHouse(Guid id)
+        {
+            var house = _repository.House.GetHouse(id, trackChanges: false);
+            if (house == null)
+            {
+                _logger.LogInfo($"House with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+            else
+            {
+                var houseDto = _mapper.Map<HouseDto>(house);
+                return Ok(houseDto);
+            }
+        }
     }
 }

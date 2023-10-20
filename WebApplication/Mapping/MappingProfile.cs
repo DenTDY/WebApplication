@@ -15,6 +15,9 @@ namespace WebApp.Mapping
             CreateMap<House, HouseDto>()
                 .ForMember(c => c.AddressAndNumberFloors,
                 opt => opt.MapFrom(x => string.Join(' ', x.Address, x.NumberFloors)));
+
+            CreateMap<Employee, EmployeeDto>();
+            CreateMap<Apartment, ApartmentDto>();
         }
     }
 }
