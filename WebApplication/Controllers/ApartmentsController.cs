@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication.Controllers
@@ -36,8 +37,8 @@ namespace WebApplication.Controllers
             return Ok(apartmentsDto);
         }
 
-        [HttpGet("{id}")]
-        public IActionResult GetapartmentForHouse(Guid houseId, Guid id)
+        [HttpGet("{id}", Name = "GetApartmentForHouse")]
+        public IActionResult GetApartmentForHouse(Guid houseId, Guid id)
         {
             var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
 
@@ -58,6 +59,36 @@ namespace WebApplication.Controllers
             var apartment = mapper.Map<ApartmentDto>(apartmentDb);
 
             return Ok(apartment);
+        }
+
+        [HttpPost]
+        public IActionResult CreateApartmentForHouse(Guid houseId, [FromBody] ApartmentForCreationDto apartment)
+        {
+            if (apartment == null)
+            {
+                loggerManager.LogError("ApartmentForCreationDto object sent from client is null.");
+                return BadRequest("ApartmentForCreationDto object is null");
+            }
+
+            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
+
+            if (house == null)
+            {
+                loggerManager.LogInfo($"House with id: {houseId} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            var apartmentEntity = mapper.Map<Apartment>(apartment);
+            repositoryManager.Apartment.CreateApartmentForHouse(houseId, apartmentEntity);
+            repositoryManager.Save();
+
+            var apartmentToReturn = mapper.Map<ApartmentDto>(apartmentEntity);
+
+            return CreatedAtRoute("GetApartmentForHouse", new
+            {
+                houseId,
+                id = apartmentToReturn.Id
+            }, apartmentToReturn);
         }
     }
 }

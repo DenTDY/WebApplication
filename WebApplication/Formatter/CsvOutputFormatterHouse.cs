@@ -46,7 +46,7 @@ namespace WebApplication.Formatter
 
         private static void FormatCsv(StringBuilder buffer, HouseDto house)
         {
-            buffer.AppendLine($"{house.Id},\"{house.Name},\"{house.AddressAndNumberFloors}\"");
+            buffer.AppendLine($"{house.Id},\"{house.Name},\"{house.AddressAndNumberFloors},\"{house.YearConstruction}");
         }
     }
 }

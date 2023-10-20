@@ -10,6 +10,12 @@ namespace Repository
         {
         }
 
+        public void CreateApartmentForHouse(Guid houseId, Apartment apartment)
+        {
+            apartment.HouseId= houseId;
+            Create(apartment);
+        }
+
         public Apartment GetApartment(Guid houseId, Guid id, bool trackChanges)
         {
             return FindByCondition(
