@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public class ApartmentForUpdateDto
+    public class ApartmentForUpdateDto : ApartmentForManipulationDto
     {
-        public int ApartmentNumber { get; set; }
-        public int NumberRooms { get; set; }
-        public string? Cost { get; set; }
     }
 }

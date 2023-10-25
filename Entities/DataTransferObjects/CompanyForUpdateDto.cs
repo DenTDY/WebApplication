@@ -1,10 +1,6 @@
 ﻿namespace Entities.DataTransferObjects
 {
-    public class CompanyForUpdateDto
+    public class CompanyForUpdateDto : CompanyForManipulation
     {
-        public string Name { get; set; }
-        public string Address { get; set; }
-        public string Country { get; set; }
-        public IEnumerable<EmployeeForUpdateDto> Employees { get; set; }
     }
 }

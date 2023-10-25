@@ -23,6 +23,11 @@ namespace WebApp.Mapping
             CreateMap<EmployeeForCreationDto, Employee>();
             CreateMap<HouseForCreationDto, House>();
             CreateMap<ApartmentForCreationDto, Apartment>();
+
+            CreateMap<CompanyForUpdateDto, Company>();
+            CreateMap<EmployeeForUpdateDto, Employee>();
+            CreateMap<HouseForUpdateDto, House>();
+            CreateMap<ApartmentForUpdateDto, Apartment>();
         }
     }
 }

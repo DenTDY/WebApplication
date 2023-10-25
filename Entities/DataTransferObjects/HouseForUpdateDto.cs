@@ -6,12 +6,7 @@ using System.Threading.Tasks;
 
 namespace Entities.DataTransferObjects
 {
-    public class HouseForUpdateDto
+    public class HouseForUpdateDto : HouseForManipulation
     {
-        public string? Name { get; set; }
-        public string? Address { get; set; }
-        public string? NumberFloors { get; set; }
-        public int YearConstruction { get; set; }
-        public IEnumerable<ApartmentForUpdateDto> Apartments { get; set; }
     }
 }

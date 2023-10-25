@@ -1,6 +1,7 @@
 using Contracts;
 using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.Mvc;
 using NLog;
 using WebApplication.Extensions;
 
@@ -20,6 +21,10 @@ public class Startup
     // This method gets called by the runtime. Use this method to add services to the container.
     public void ConfigureServices(IServiceCollection services)
     {
+        services.Configure<ApiBehaviorOptions>(options =>
+        {
+            options.SuppressModelStateInvalidFilter = true;
+        });
         services.ConfigureCors();
         services.ConfigureIISIntegration();
         services.ConfigureLoggerService();
@@ -27,6 +32,7 @@ public class Startup
         services.ConfigureSqlContext(Configuration);
         services.ConfigureRepositoryManager();
 
+        services.AddAutoMapper(typeof(Startup));
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
@@ -35,6 +41,7 @@ public class Startup
             config.RespectBrowserAcceptHeader = true;
             config.ReturnHttpNotAcceptable = true;
         }).AddXmlDataContractSerializerFormatters()
+        .AddXmlDataContractSerializerFormatters()
         .AddCustomCSVFormatter();
     }
 
