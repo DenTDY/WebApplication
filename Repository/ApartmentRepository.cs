@@ -16,6 +16,11 @@ namespace Repository
             Create(apartment);
         }
 
+        public void DeleteApartment(Apartment apartment)
+        {
+            Delete(apartment);
+        }
+
         public Apartment GetApartment(Guid houseId, Guid id, bool trackChanges)
         {
             return FindByCondition(

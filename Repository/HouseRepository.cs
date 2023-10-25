@@ -17,6 +17,11 @@ namespace Repository
             Create(house);
         }
 
+        public void DeleteHouse(House house)
+        {
+            Delete(house);
+        }
+
         public IEnumerable<House> GetAllHouses(bool trackChanges)
         {
             return FindAll(trackChanges)

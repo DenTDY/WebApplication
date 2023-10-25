@@ -108,5 +108,44 @@ namespace WebApp.Controllers
 
             return CreatedAtRoute("HouseCollection", new { ids }, houseCollectionToReturn);
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteHouse(Guid id)
+        {
+            var house = _repository.House.GetHouse(id, trackChanges: false);
+
+            if (house == null)
+            {
+                _logger.LogInfo($"House with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            _repository.House.DeleteHouse(house);
+            _repository.Save();
+            return NoContent();
+        }
+
+        [HttpPut("{id}")]
+        public IActionResult UpdateHouse(Guid id, [FromBody] HouseForUpdateDto house)
+        {
+            if (house == null)
+            {
+                _logger.LogError("HouseForUpdateDto object sent from client is null.");
+                return BadRequest("HouseForUpdateDto object is null");
+            }
+
+            var houseEntity = _repository.House.GetHouse(id, trackChanges: true);
+
+            if (houseEntity == null)
+            {
+                _logger.LogInfo($"House with id: {id} doesn't exist in the database.");
+                return NotFound();
+            }
+
+            _mapper.Map(house, houseEntity);
+            _repository.Save();
+
+            return NoContent();
+        }
     }
 }

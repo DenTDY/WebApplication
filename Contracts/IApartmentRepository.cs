@@ -8,5 +8,6 @@ namespace Contracts
         IEnumerable<Apartment> GetApartments(Guid houseId, bool trackChanges);
         Apartment GetApartment(Guid houseId, Guid id, bool trackChanges);
         void CreateApartmentForHouse(Guid houseId, Apartment apartment);
+        void DeleteApartment(Apartment apartment);
     }
 }
