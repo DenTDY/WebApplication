@@ -2,8 +2,12 @@
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
+using Entities.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using WebApp.ActionFilters;
+using WebApplication.ActionFilters;
 
 namespace WebApplication.Controllers
 {
@@ -23,9 +27,15 @@ namespace WebApplication.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetApartmentsForHouse(Guid houseId)
+        public async Task<IActionResult> GetApartmentsForHouse(Guid houseId, [FromQuery] ApartmentParameters apartmentParametrs)
         {
-            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
+
+            if (!apartmentParametrs.ValidNumberRoomRange)
+            {
+                return BadRequest("Max number room can't be less than min number room.");
+            }
+
+            var house = await repositoryManager.House.GetHouseAsync(houseId, trackChanges: false);
 
             if (house == null)
             {
@@ -33,15 +43,18 @@ namespace WebApplication.Controllers
                 return NotFound();
             }
 
-            var apartmentsFromDb = repositoryManager.Apartment.GetApartments(houseId, trackChanges: false);
+            var apartmentsFromDb = await repositoryManager.Apartment.GetApartmentsAsync(houseId, apartmentParametrs, trackChanges: false);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(apartmentsFromDb.MetaData));
+
             var apartmentsDto = mapper.Map<IEnumerable<ApartmentDto>>(apartmentsFromDb);
             return Ok(apartmentsDto);
         }
 
         [HttpGet("{id}", Name = "GetApartmentForHouse")]
-        public IActionResult GetApartmentForHouse(Guid houseId, Guid id)
+        public async Task<IActionResult> GetApartmentForHouse(Guid houseId, Guid id)
         {
-            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
+            var house = await repositoryManager.House.GetHouseAsync(houseId, trackChanges: false);
 
             if (house == null)
             {
@@ -49,7 +62,7 @@ namespace WebApplication.Controllers
                 return NotFound();
             }
 
-            var apartmentDb = repositoryManager.Apartment.GetApartment(houseId, id, trackChanges: false);
+            var apartmentDb = await repositoryManager.Apartment.GetApartmentAsync(houseId, id, trackChanges: false);
 
             if (apartmentDb == null)
             {
@@ -63,25 +76,12 @@ namespace WebApplication.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateApartmentForHouse(Guid houseId, [FromBody] ApartmentForCreationDto apartment)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> CreateApartmentForHouse(Guid houseId, [FromBody] ApartmentForCreationDto apartment)
         {
-            if (apartment == null)
-            {
-                loggerManager.LogError("ApartmentForCreationDto object sent from client is null.");
-                return BadRequest("ApartmentForCreationDto object is null");
-            }
-
-            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
-
-            if (house == null)
-            {
-                loggerManager.LogInfo($"House with id: {houseId} doesn't exist in the database.");
-                return NotFound();
-            }
-
             var apartmentEntity = mapper.Map<Apartment>(apartment);
             repositoryManager.Apartment.CreateApartmentForHouse(houseId, apartmentEntity);
-            repositoryManager.Save();
+            await repositoryManager.SaveAsync();
 
             var apartmentToReturn = mapper.Map<ApartmentDto>(apartmentEntity);
 
@@ -93,94 +93,52 @@ namespace WebApplication.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteApartmentForHouse(Guid houseId, Guid id)
+        [ServiceFilter(typeof(ValidateApartmentForHouseExistsAttribute))]
+        public async Task<IActionResult> DeleteApartmentForHouse(Guid houseId, Guid id)
         {
-            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
-
-            if (house == null)
-            {
-                loggerManager.LogInfo("$\"House with id: {companyId} doesn't exist in the\r\ndatabase.\"");
-                return NotFound();
-            }
-
-            var apartmentForHouse = repositoryManager.Apartment.GetApartment(houseId, id, trackChanges: false);
-
-            if (apartmentForHouse == null)
-            {
-                loggerManager.LogInfo($"Apartment with id: {id} doesn't exist in the database.");
-                return NotFound();
-            }
-
+            var apartmentForHouse = HttpContext.Items["apartmen"] as Apartment;
             repositoryManager.Apartment.DeleteApartment(apartmentForHouse);
-            repositoryManager.Save();
+            await repositoryManager.SaveAsync();
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateApartmentForHouse(Guid houseId, Guid id, [FromBody] ApartmentForUpdateDto apartment)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateApartmentForHouseExistsAttribute))]
+        public async Task<IActionResult> UpdateApartmentForHouse(Guid houseId, Guid id, [FromBody] ApartmentForUpdateDto apartment)
         {
-            if (apartment == null)
-            {
-                loggerManager.LogError("ApartmentForUpdateDto object sent from client is null.");
-                return BadRequest("ApartmentForUpdateDto object is null");
-            }
-
-            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
-
-            if (house == null)
-            {
-                loggerManager.LogInfo($"House with id: {houseId} doesn't exist in the database.");
-                return NotFound();
-            }
-
-            var apartmentEntity = repositoryManager.Apartment.GetApartment(houseId, id, trackChanges: true);
-
-            if (apartmentEntity == null)
-            {
-                loggerManager.LogInfo($"Apartment with id: {id} doesn't exist in the database.");
-                return NotFound();
-            }
-
+            var apartmentEntity = HttpContext.Items["apartment"] as Apartment;
             mapper.Map(apartment, apartmentEntity);
-            repositoryManager.Save();
+            await repositoryManager.SaveAsync();
             return NoContent();
         }
 
         [HttpPatch("{id}")]
-        public IActionResult PartiallyUpdateApartmentForHouse(
+        [ServiceFilter(typeof(ValidateApartmentForHouseExistsAttribute))]
+        public async Task<IActionResult> PartiallyUpdateApartmentForHouse(
             Guid houseId,
             Guid id,
             [FromBody] JsonPatchDocument<ApartmentForUpdateDto> patchDoc)
         {
-
             if (patchDoc == null)
             {
                 loggerManager.LogError("patchDoc object sent from client is null.");
                 return BadRequest("patchDoc object is null");
             }
 
-            var house = repositoryManager.House.GetHouse(houseId, trackChanges: false);
-
-            if (house == null)
-            {
-                loggerManager.LogInfo($"House with id: {houseId} doesn't exist in the database.");
-                return NotFound();
-            }
-
-            var apartmentEntity = repositoryManager.Apartment.GetApartment(houseId, id, trackChanges: true);
-
-            if (apartmentEntity == null)
-            {
-                loggerManager.LogInfo($"Apartment with id: {id} doesn't exist in the database.");
-                return NotFound();
-            }
-
+            var apartmentEntity = HttpContext.Items["apartment"] as Apartment;
             var apartmentToPatch = mapper.Map<ApartmentForUpdateDto>(apartmentEntity);
 
-            patchDoc.ApplyTo(apartmentToPatch);
-            mapper.Map(apartmentToPatch, apartmentEntity);
+            TryValidateModel(apartmentToPatch);
 
-            repositoryManager.Save();
+            if (!ModelState.IsValid)
+            {
+                loggerManager.LogError("Invalid model state for the patch document");
+                return UnprocessableEntity(ModelState);
+            }
+
+            mapper.Map(apartmentToPatch, apartmentEntity);
+            await repositoryManager.SaveAsync();
 
             return NoContent();
         }

@@ -3,6 +3,8 @@ using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using WebApp.ActionFilters;
+using WebApplication.ActionFilters;
 using WebApplication.Extensions;
 
 namespace WebApplication;
@@ -31,6 +33,12 @@ public class Startup
 
         services.ConfigureSqlContext(Configuration);
         services.ConfigureRepositoryManager();
+
+        services.AddScoped<ValidationFilterAttribute>();
+        services.AddScoped<ValidateCompanyExistsAttribute>();
+        services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+        services.AddScoped<ValidateHouseExistsAttribute>();
+        services.AddScoped<ValidateApartmentForHouseExistsAttribute>();
 
         services.AddAutoMapper(typeof(Startup));
         services.AddControllers();

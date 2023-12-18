@@ -6,6 +6,6 @@
         IEmployeeRepository Employee { get; }
         IHouseRepository House { get; }
         IApartmentRepository Apartment { get; }
-        void Save();
+        Task SaveAsync();
     }
 }

@@ -1,6 +1,8 @@
 ﻿using Contracts;
 using Entities;
 using Entities.Models;
+using Entities.RequestFeatures;
+using Microsoft.EntityFrameworkCore;
 
 namespace Repository
 {
@@ -21,16 +23,23 @@ namespace Repository
             Delete(apartment);
         }
 
-        public Apartment GetApartment(Guid houseId, Guid id, bool trackChanges)
+        public async Task<Apartment> GetApartmentAsync(Guid houseId, Guid id, bool trackChanges)
         {
-            return FindByCondition(
+            return await FindByCondition(
                 e => e.HouseId.Equals(houseId) && e.Id.Equals(id), trackChanges)
-                .SingleOrDefault();
+                .SingleOrDefaultAsync();
         }
 
-        public IEnumerable<Apartment> GetApartments(Guid houseId, bool trackChanges)
+        public async Task<PagedList<Apartment>> GetApartmentsAsync(Guid houseId, ApartmentParameters apartmentParameters, bool trackChanges)
         {
-            return FindByCondition(e => e.HouseId.Equals(houseId), trackChanges).OrderBy(e => e.ApartmentNumber);
+            var apartments = await FindByCondition(e =>
+            e.HouseId.Equals(houseId) &&
+            (e.NumberRooms >= apartmentParameters.MinNumberRoom &&
+            e.NumberRooms <= apartmentParameters.MaxNumberRoom), trackChanges)
+                .OrderBy(e => e.Cost)
+                .ToListAsync();
+
+            return PagedList<Apartment>.ToPagedList(apartments, apartmentParameters.PageNumber, apartmentParameters.PageSize);
         }
 
         public void TestApartment()

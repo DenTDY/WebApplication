@@ -3,6 +3,8 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
+using WebApp.ActionFilters;
+using WebApplication.ActionFilters;
 using WebApplication.ModelBinders;
 
 namespace WebApp.Controllers
@@ -22,17 +24,17 @@ namespace WebApp.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetHouses()
+        public async Task<IActionResult> GetHouses()
         {
-            var houses = _repository.House.GetAllHouses(trackChanges : false);
-                var housesDto = _mapper.Map<IEnumerable<HouseDto>>(houses);
-                return Ok(housesDto);
+            var houses = await _repository.House.GetAllHousesAsync(trackChanges: false);
+            var housesDto = _mapper.Map<IEnumerable<HouseDto>>(houses);
+            return Ok(housesDto);
         }
 
         [HttpGet("{id}", Name = "HouseById")]
-        public IActionResult GetHouse(Guid id)
+        public async Task<IActionResult> GetHouse(Guid id)
         {
-            var house = _repository.House.GetHouse(id, trackChanges: false);
+            var house = await _repository.House.GetHouseAsync(id, trackChanges: false);
             if (house == null)
             {
                 _logger.LogInfo($"House with id: {id} doesn't exist in the database.");
@@ -46,7 +48,7 @@ namespace WebApp.Controllers
         }
 
         [HttpGet("collection/{ids}", Name = "HouseCollection")]
-        public IActionResult GetHouseCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
+        public async Task<IActionResult> GetHouseCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
             if (ids == null)
             {
@@ -54,21 +56,22 @@ namespace WebApp.Controllers
                 return BadRequest("Parameter ids is null");
             }
 
-            var houseEntityes = _repository.House.GetByIds(ids, trackChanges: false);
+            var houseEntities = await _repository.House.GetByIdsAsync(ids, trackChanges: false);
 
-            if (ids.Count() != houseEntityes.Count())
+            if (ids.Count() != houseEntities.Count())
             {
                 _logger.LogError("Some ids are not valid in a collection");
                 return NotFound();
             }
 
-            var housesToReturn = _mapper.Map<IEnumerable<HouseDto>>(houseEntityes);
+            var housesToReturn = _mapper.Map<IEnumerable<HouseDto>>(houseEntities);
 
             return Ok(housesToReturn);
         }
 
         [HttpPost]
-        public IActionResult CreateHouse([FromBody] HouseForCreationDto house)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> CreateHouse([FromBody] HouseForCreationDto house)
         {
             if (house == null)
             {
@@ -78,7 +81,7 @@ namespace WebApp.Controllers
 
             var houseEntry = _mapper.Map<House>(house);
             _repository.House.CreateHouse(houseEntry);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             var houseToReturn = _mapper.Map<HouseDto>(houseEntry);
 
@@ -86,7 +89,8 @@ namespace WebApp.Controllers
         }
 
         [HttpPost("collection")]
-        public IActionResult CreateHouseCollection([FromBody] IEnumerable<HouseForCreationDto> houseCollection)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> CreateHouseCollection([FromBody] IEnumerable<HouseForCreationDto> houseCollection)
         {
             if (houseCollection == null)
             {
@@ -101,7 +105,7 @@ namespace WebApp.Controllers
                 _repository.House.CreateHouse(house);
             }
 
-            _repository.Save();
+            await _repository.SaveAsync();
 
             var houseCollectionToReturn = _mapper.Map<IEnumerable<HouseDto>>(houseEntities);
             var ids = string.Join(",", houseCollectionToReturn.Select(c => c.Id));
@@ -110,9 +114,10 @@ namespace WebApp.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteHouse(Guid id)
+        [ServiceFilter(typeof(ValidateHouseExistsAttribute))]
+        public async Task<IActionResult> DeleteHouse(Guid id)
         {
-            var house = _repository.House.GetHouse(id, trackChanges: false);
+            var house = await _repository.House.GetHouseAsync(id, trackChanges: false);
 
             if (house == null)
             {
@@ -121,12 +126,14 @@ namespace WebApp.Controllers
             }
 
             _repository.House.DeleteHouse(house);
-            _repository.Save();
+            await _repository.SaveAsync();
             return NoContent();
         }
 
         [HttpPut("{id}")]
-        public IActionResult UpdateHouse(Guid id, [FromBody] HouseForUpdateDto house)
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateHouseExistsAttribute))]
+        public async Task<IActionResult> UpdateHouse(Guid id, [FromBody] HouseForUpdateDto house)
         {
             if (house == null)
             {
@@ -134,7 +141,7 @@ namespace WebApp.Controllers
                 return BadRequest("HouseForUpdateDto object is null");
             }
 
-            var houseEntity = _repository.House.GetHouse(id, trackChanges: true);
+            var houseEntity = await _repository.House.GetHouseAsync(id, trackChanges: true);
 
             if (houseEntity == null)
             {
@@ -143,7 +150,7 @@ namespace WebApp.Controllers
             }
 
             _mapper.Map(house, houseEntity);
-            _repository.Save();
+            await _repository.SaveAsync();
 
             return NoContent();
         }

@@ -1,6 +1,7 @@
 ﻿using Contracts;
 using Entities;
 using Entities.Models;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.Design;
 
 namespace Repository
@@ -22,23 +23,23 @@ namespace Repository
             Delete(house);
         }
 
-        public IEnumerable<House> GetAllHouses(bool trackChanges)
+        public async Task<IEnumerable<House>> GetAllHousesAsync(bool trackChanges)
         {
-            return FindAll(trackChanges)
+            return await FindAll(trackChanges)
                 .OrderBy(c => c.Address)
-                .ToList();
+                .ToListAsync();
         }
 
-        public IEnumerable<House> GetByIds(IEnumerable<Guid> ids, bool trackChanges)
+        public async Task<IEnumerable<House>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges)
         {
-            return FindByCondition(x =>
-                ids.Contains(x.Id), trackChanges).ToList();
+            return await FindByCondition(x =>
+                ids.Contains(x.Id), trackChanges).ToListAsync();
         }
 
-        public House GetHouse(Guid houseId, bool trackChanges)
+        public async Task<House> GetHouseAsync(Guid houseId, bool trackChanges)
         {
-            return FindByCondition(
-                 c => c.Id.Equals(houseId), trackChanges).SingleOrDefault();
+            return await FindByCondition(
+                 c => c.Id.Equals(houseId), trackChanges).SingleOrDefaultAsync();
         }
 
         public void TestHouse()

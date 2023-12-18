@@ -5,10 +5,10 @@ namespace Contracts
     public interface IHouseRepository
     {
         public void TestHouse();
-        IEnumerable<House> GetAllHouses(bool trackChanges);
-        House GetHouse(Guid houseId, bool trackChanges);
+        Task<IEnumerable<House>> GetAllHousesAsync(bool trackChanges);
+        Task<House> GetHouseAsync(Guid houseId, bool trackChanges);
         void CreateHouse(House house);
-        IEnumerable<House> GetByIds(IEnumerable<Guid> ids, bool trackChanges);
+        Task<IEnumerable<House>> GetByIdsAsync(IEnumerable<Guid> ids, bool trackChanges);
         void DeleteHouse(House house);
     }
 }
