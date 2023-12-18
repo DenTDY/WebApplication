@@ -5,5 +5,6 @@
         public uint MinNumberRoom { get; set; }
         public uint MaxNumberRoom { get; set; } = 99;
         public bool ValidNumberRoomRange => MaxNumberRoom > MinNumberRoom;
+        public string SearchTerm { get; set; }
     }
 }

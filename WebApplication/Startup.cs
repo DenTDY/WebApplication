@@ -1,8 +1,10 @@
 using Contracts;
+using Entities.DataTransferObjects;
 using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
+using Repository.DataShaping;
 using WebApp.ActionFilters;
 using WebApplication.ActionFilters;
 using WebApplication.Extensions;
@@ -39,6 +41,9 @@ public class Startup
         services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
         services.AddScoped<ValidateHouseExistsAttribute>();
         services.AddScoped<ValidateApartmentForHouseExistsAttribute>();
+
+        services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
+        services.AddScoped<IDataShaper<ApartmentDto>, DataShaper<ApartmentDto>>();
 
         services.AddAutoMapper(typeof(Startup));
         services.AddControllers();

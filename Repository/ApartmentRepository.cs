@@ -3,6 +3,8 @@ using Entities;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.EntityFrameworkCore;
+using Repository.Extensions;
+using System.ComponentModel.Design;
 
 namespace Repository
 {
@@ -32,11 +34,10 @@ namespace Repository
 
         public async Task<PagedList<Apartment>> GetApartmentsAsync(Guid houseId, ApartmentParameters apartmentParameters, bool trackChanges)
         {
-            var apartments = await FindByCondition(e =>
-            e.HouseId.Equals(houseId) &&
-            (e.NumberRooms >= apartmentParameters.MinNumberRoom &&
-            e.NumberRooms <= apartmentParameters.MaxNumberRoom), trackChanges)
-                .OrderBy(e => e.Cost)
+            var apartments = await FindByCondition(e => e.HouseId.Equals(houseId), trackChanges)
+                .FilterApartments(apartmentParameters.MinNumberRoom, apartmentParameters.MaxNumberRoom)
+                .Search(apartmentParameters.SearchTerm)
+                .Sort(apartmentParameters.OrderBy)
                 .ToListAsync();
 
             return PagedList<Apartment>.ToPagedList(apartments, apartmentParameters.PageNumber, apartmentParameters.PageSize);

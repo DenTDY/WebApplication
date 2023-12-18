@@ -18,12 +18,14 @@ namespace WebApplication.Controllers
         private readonly IRepositoryManager repositoryManager;
         private readonly ILoggerManager loggerManager;
         private readonly IMapper mapper;
+        private readonly IDataShaper<ApartmentDto> dataShaper;
 
-        public ApartmentsController(IRepositoryManager _repositoryManager, ILoggerManager _loggerManager, IMapper _mapper)
+        public ApartmentsController(IRepositoryManager _repositoryManager, ILoggerManager _loggerManager, IMapper _mapper, IDataShaper<ApartmentDto> _dataShaper)
         {
             repositoryManager = _repositoryManager;
             loggerManager = _loggerManager;
             mapper = _mapper;
+            dataShaper = _dataShaper;
         }
 
         [HttpGet]
@@ -48,7 +50,7 @@ namespace WebApplication.Controllers
             Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(apartmentsFromDb.MetaData));
 
             var apartmentsDto = mapper.Map<IEnumerable<ApartmentDto>>(apartmentsFromDb);
-            return Ok(apartmentsDto);
+            return Ok(dataShaper.ShapeData(apartmentsDto, apartmentParametrs.Fields));
         }
 
         [HttpGet("{id}", Name = "GetApartmentForHouse")]
