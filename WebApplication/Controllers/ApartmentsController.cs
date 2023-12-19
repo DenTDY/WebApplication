@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using WebApplication.ActionFilters;
-using WebApplication.ActionFilters;
 
 namespace WebApplication.Controllers
 {
@@ -28,6 +27,10 @@ namespace WebApplication.Controllers
             dataShaper = _dataShaper;
         }
 
+        /// <summary>
+        /// Получает список всех квартир
+        /// </summary>
+        /// <returns> Список квартир</returns>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetApartmentsForHouse(Guid houseId, [FromQuery] ApartmentParameters apartmentParametrs)
@@ -54,6 +57,10 @@ namespace WebApplication.Controllers
             return Ok(dataShaper.ShapeData(apartmentsDto, apartmentParametrs.Fields));
         }
 
+        /// <summary>
+        /// Получает квартиру дома
+        /// </summary>
+        /// <returns> Квартира</returns>
         [HttpGet("{id}", Name = "GetApartmentForHouse")]
         public async Task<IActionResult> GetApartmentForHouse(Guid houseId, Guid id)
         {
@@ -78,6 +85,10 @@ namespace WebApplication.Controllers
             return Ok(apartment);
         }
 
+        /// <summary>
+        /// Создание квартиры
+        /// </summary>
+        /// <returns> Квартира</returns>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateApartmentForHouse(Guid houseId, [FromBody] ApartmentForCreationDto apartment)
@@ -95,6 +106,9 @@ namespace WebApplication.Controllers
             }, apartmentToReturn);
         }
 
+        /// <summary>
+        /// Удалить квартиру
+        /// </summary>
         [HttpDelete("{id}")]
         [ServiceFilter(typeof(ValidateApartmentForHouseExistsAttribute))]
         public async Task<IActionResult> DeleteApartmentForHouse(Guid houseId, Guid id)
@@ -105,6 +119,9 @@ namespace WebApplication.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Обновить информацию о квартире
+        /// </summary>
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateApartmentForHouseExistsAttribute))]
@@ -116,6 +133,9 @@ namespace WebApplication.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Обновить информацию о квартире с документа
+        /// </summary>
         [HttpPatch("{id}")]
         [ServiceFilter(typeof(ValidateApartmentForHouseExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateApartmentForHouse(

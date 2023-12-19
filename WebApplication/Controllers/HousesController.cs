@@ -10,8 +10,9 @@ using WebApplication.ModelBinders;
 namespace WebApplication.Controllers
 {
     [ApiVersion("1.0")]
-    [Route("api/[controller]")]
+    [Route("api/houses")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class HousesController : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -24,6 +25,10 @@ namespace WebApplication.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Получает список всех домов
+        /// </summary>
+        /// <returns> Список домов</returns>
         [HttpGet(Name = "GetHouses"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetHouses()
         {
@@ -32,6 +37,10 @@ namespace WebApplication.Controllers
             return Ok(housesDto);
         }
 
+        /// <summary>
+        /// Получить дом по id
+        /// </summary>
+        /// <returns> Дом/returns>
         [HttpGet("{id}", Name = "HouseById")]
         public async Task<IActionResult> GetHouse(Guid id)
         {
@@ -48,6 +57,10 @@ namespace WebApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Получает список домов по id
+        /// </summary>
+        /// <returns> Список домов</returns>
         [HttpGet("collection/{ids}", Name = "HouseCollection")]
         public async Task<IActionResult> GetHouseCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))] IEnumerable<Guid> ids)
         {
@@ -70,6 +83,10 @@ namespace WebApplication.Controllers
             return Ok(housesToReturn);
         }
 
+        /// <summary>
+        /// Создание дома
+        /// </summary>
+        /// <returns> Дом</returns>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateHouse([FromBody] HouseForCreationDto house)
@@ -89,6 +106,10 @@ namespace WebApplication.Controllers
             return CreatedAtRoute("HouseById", new { id = houseToReturn.Id }, houseToReturn);
         }
 
+        /// <summary>
+        /// Создание списка домов
+        /// </summary>
+        /// <returns> Список домов</returns>
         [HttpPost("collection")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateHouseCollection([FromBody] IEnumerable<HouseForCreationDto> houseCollection)
@@ -114,6 +135,9 @@ namespace WebApplication.Controllers
             return CreatedAtRoute("HouseCollection", new { ids }, houseCollectionToReturn);
         }
 
+        /// <summary>
+        /// Удаление дома
+        /// </summary>
         [HttpDelete("{id}")]
         [ServiceFilter(typeof(ValidateHouseExistsAttribute))]
         public async Task<IActionResult> DeleteHouse(Guid id)
@@ -131,6 +155,9 @@ namespace WebApplication.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Обновление информации о доме
+        /// </summary>
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateHouseExistsAttribute))]
@@ -156,6 +183,9 @@ namespace WebApplication.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Получить методы
+        /// </summary>
         [HttpOptions]
         public IActionResult GetHousesOptions()
         {

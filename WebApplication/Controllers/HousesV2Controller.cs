@@ -5,8 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace WebApplication.Controllers
 {
     [ApiVersion("2.0")]
-    [Route("api/companies")]
+    [Route("api/houses")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class HouseV2Controller : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -16,6 +17,10 @@ namespace WebApplication.Controllers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Получает список всех домов
+        /// </summary>
+        /// <returns> Список домов</returns>
         [HttpGet(Name = "GetHouses"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetHouses()
         {

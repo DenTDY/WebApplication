@@ -7,6 +7,7 @@ namespace WebApplication.Controllers
     [ApiVersion("2.0")]
     [Route("api/companies")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v2")]
     public class CompaniesV2Controller : ControllerBase
     {
         private readonly IRepositoryManager _repository;
@@ -15,7 +16,10 @@ namespace WebApplication.Controllers
         {
             _repository = repository;
         }
-
+        /// <summary>
+        /// Получает список всех компаний
+        /// </summary>
+        /// <returns> Список компаний</returns>
         [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {

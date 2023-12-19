@@ -26,6 +26,9 @@ namespace WebApplication.Controllers
             _authManager = authManager;
         }
 
+        /// <summary>
+        /// Регистрация польователя
+        /// </summary>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> RegisterUser([FromBody] UserForRegistrationDto userForRegistration)
@@ -46,6 +49,9 @@ namespace WebApplication.Controllers
             return StatusCode(201);
         }
 
+        /// <summary>
+        /// Авторизация пользователя
+        /// </summary>
         [HttpPost("login")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto user)

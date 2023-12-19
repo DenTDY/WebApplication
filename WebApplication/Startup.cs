@@ -33,6 +33,7 @@ public class Startup
         services.ConfigureCors();
         services.ConfigureIISIntegration();
         services.ConfigureLoggerService();
+        services.ConfigureSwagger();
 
         services.ConfigureSqlContext(Configuration);
         services.ConfigureRepositoryManager();
@@ -69,6 +70,12 @@ public class Startup
         if (env.IsDevelopment())
         {
             app.UseDeveloperExceptionPage();
+            app.UseSwagger();
+            app.UseSwaggerUI(s =>
+            {
+                s.SwaggerEndpoint("/swagger/v1/swagger.json", "Code Maze API v1");
+                s.SwaggerEndpoint("/swagger/v2/swagger.json", "Code Maze API v2");
+            });
         }
         else
         {

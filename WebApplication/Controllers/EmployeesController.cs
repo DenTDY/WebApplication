@@ -27,6 +27,10 @@ namespace WebApplication.Controllers
             dataShaper = _dataShaper;
         }
 
+        /// <summary>
+        /// Получает список всех сотрудников
+        /// </summary>
+        /// <returns> Список сотрудников</returns>
         [HttpGet]
         [HttpHead]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId, [FromQuery] EmployeeParameters employeeParametrs)
@@ -52,6 +56,10 @@ namespace WebApplication.Controllers
             return Ok(dataShaper.ShapeData(employeesDto, employeeParametrs.Fields));
         }
 
+        /// <summary>
+        /// Получает сотрудника компании
+        /// </summary>
+        /// <returns> Сотрудник</returns>
         [HttpGet("{id}", Name = "GetEmployeeForCompany")]
         public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid id)
         {
@@ -76,6 +84,10 @@ namespace WebApplication.Controllers
             return Ok(employee);
         }
 
+        /// <summary>
+        /// Добавление сотрудника
+        /// </summary>
+        /// <returns> Сотрудник</returns>
         [HttpPost]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
@@ -93,6 +105,9 @@ namespace WebApplication.Controllers
             }, employeeToReturn);
         }
 
+        /// <summary>
+        /// Уволитьь сотрудника
+        /// </summary>
         [HttpDelete("{id}")]
         [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> DeleteEmloyeeForCompany(Guid companyId, Guid id)
@@ -103,6 +118,9 @@ namespace WebApplication.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Обновить информацию о сотруднике
+        /// </summary>
         [HttpPut("{id}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
@@ -114,6 +132,9 @@ namespace WebApplication.Controllers
             return NoContent();
         }
 
+        /// <summary>
+        /// Обновить информацию о сотруднике с документа
+        /// </summary>
         [HttpPatch("{id}")]
         [ServiceFilter(typeof(ValidateEmployeeForCompanyExistsAttribute))]
         public async Task<IActionResult> PartiallyUpdateEmployeeForCompany(
