@@ -1,4 +1,4 @@
-﻿using Entities.DataTransferObjects;
+﻿using Entities.DataTransferObjects.House;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Net.Http.Headers;
 using System.Text;

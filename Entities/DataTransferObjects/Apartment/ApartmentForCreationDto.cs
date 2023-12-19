@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.DataTransferObjects
+namespace Entities.DataTransferObjects.Apartment
 {
-    public class HouseForCreationDto : HouseForManipulation
+    public class ApartmentForCreationDto : ApartmentForManipulationDto
     {
     }
 }

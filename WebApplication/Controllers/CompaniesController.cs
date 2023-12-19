@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.Company;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication.ActionFilters;
 using WebApplication.ModelBinders;
@@ -23,7 +24,7 @@ namespace WebApplication.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _repository.Company.GetAllCompaniesAsync(trackChanges : false);

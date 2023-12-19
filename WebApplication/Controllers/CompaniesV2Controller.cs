@@ -1,4 +1,5 @@
 ﻿using Contracts;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace WebApplication.Controllers
@@ -15,7 +16,7 @@ namespace WebApplication.Controllers
             _repository = repository;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies()
         {
             var companies = await _repository.Company.GetAllCompaniesAsync(trackChanges: false);

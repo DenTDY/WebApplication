@@ -1,5 +1,9 @@
 ﻿using AutoMapper;
-using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.Apartment;
+using Entities.DataTransferObjects.Company;
+using Entities.DataTransferObjects.Employee;
+using Entities.DataTransferObjects.House;
+using Entities.DataTransferObjects.User;
 using Entities.Models;
 
 namespace WebApplication.Mapping
@@ -28,6 +32,8 @@ namespace WebApplication.Mapping
             CreateMap<EmployeeForUpdateDto, Employee>();
             CreateMap<HouseForUpdateDto, House>();
             CreateMap<ApartmentForUpdateDto, Apartment>();
+
+            CreateMap<UserForRegistrationDto, User>();
         }
     }
 }

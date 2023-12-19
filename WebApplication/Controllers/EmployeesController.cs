@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.Employee;
 using Entities.Models;
 using Entities.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;

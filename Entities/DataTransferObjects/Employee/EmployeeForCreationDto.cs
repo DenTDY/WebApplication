@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Entities.DataTransferObjects
+namespace Entities.DataTransferObjects.Employee
 {
-    public class CompanyForCreationDto : CompanyForManipulation
+    public class EmployeeForCreationDto : EmployeeForManipulationDto
     {
     }
 }

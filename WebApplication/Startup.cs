@@ -1,5 +1,6 @@
 using Contracts;
-using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.Apartment;
+using Entities.DataTransferObjects.Employee;
 using LoggerService;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
@@ -56,6 +57,10 @@ public class Startup
         }).AddXmlDataContractSerializerFormatters()
         .AddXmlDataContractSerializerFormatters()
         .AddCustomCSVFormatter();
+
+        services.AddAuthentication();
+        services.ConfigureIdentity();
+        services.ConfigureJWT(Configuration);
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -81,6 +86,7 @@ public class Startup
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>

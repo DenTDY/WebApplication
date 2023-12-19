@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
 using Contracts;
-using Entities.DataTransferObjects;
+using Entities.DataTransferObjects.House;
 using Entities.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WebApplication.ActionFilters;
 using WebApplication.ModelBinders;
@@ -23,7 +24,7 @@ namespace WebApplication.Controllers
             _mapper = mapper;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetHouses"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetHouses()
         {
             var houses = await _repository.House.GetAllHousesAsync(trackChanges: false);

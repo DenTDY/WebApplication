@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Entities.DataTransferObjects.Employee;
 
-namespace Entities.DataTransferObjects
+namespace Entities.DataTransferObjects.Company
 {
     public abstract class CompanyForManipulation
     {

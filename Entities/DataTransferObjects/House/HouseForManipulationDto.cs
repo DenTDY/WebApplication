@@ -4,8 +4,9 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Entities.DataTransferObjects.Apartment;
 
-namespace Entities.DataTransferObjects
+namespace Entities.DataTransferObjects.House
 {
     public abstract class HouseForManipulation
     {
