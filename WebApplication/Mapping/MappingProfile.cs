@@ -2,7 +2,7 @@
 using Entities.DataTransferObjects;
 using Entities.Models;
 
-namespace WebApp.Mapping
+namespace WebApplication.Mapping
 {
     public class MappingProfile : Profile
     {

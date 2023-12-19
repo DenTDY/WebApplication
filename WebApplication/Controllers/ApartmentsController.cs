@@ -6,7 +6,7 @@ using Entities.RequestFeatures;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using WebApp.ActionFilters;
+using WebApplication.ActionFilters;
 using WebApplication.ActionFilters;
 
 namespace WebApplication.Controllers
@@ -29,6 +29,7 @@ namespace WebApplication.Controllers
         }
 
         [HttpGet]
+        [HttpHead]
         public async Task<IActionResult> GetApartmentsForHouse(Guid houseId, [FromQuery] ApartmentParameters apartmentParametrs)
         {
 

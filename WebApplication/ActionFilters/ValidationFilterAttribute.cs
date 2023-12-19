@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
-namespace WebApp.ActionFilters
+namespace WebApplication.ActionFilters
 {
     public class ValidationFilterAttribute : IActionFilter
     {

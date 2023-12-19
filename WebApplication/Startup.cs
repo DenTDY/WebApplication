@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
 using Repository.DataShaping;
-using WebApp.ActionFilters;
+using WebApplication.ActionFilters;
 using WebApplication.ActionFilters;
 using WebApplication.Extensions;
 

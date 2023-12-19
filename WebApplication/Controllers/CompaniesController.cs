@@ -3,11 +3,12 @@ using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
 using Microsoft.AspNetCore.Mvc;
-using WebApp.ActionFilters;
+using WebApplication.ActionFilters;
 using WebApplication.ModelBinders;
 
-namespace WebApp.Controllers
+namespace WebApplication.Controllers
 {
+    [ApiVersion("1.0")]
     [Route("api/[controller]")]
     [ApiController]
     public class CompaniesController : ControllerBase
@@ -119,6 +120,13 @@ namespace WebApp.Controllers
             await _repository.SaveAsync();
 
             return NoContent();
+        }
+
+        [HttpOptions]
+        public IActionResult GetCompaniesOptions()
+        {
+            Response.Headers.Add("Allow", "GET, OPTIONS, POST");
+            return Ok();
         }
     }
 }
